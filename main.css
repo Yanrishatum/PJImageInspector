@@ -1,0 +1,296 @@
+body
+{
+  font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+  font-size: 10pt;
+  color: #eeeeee;
+  background-color: #333333;
+}
+
+input
+{
+  font-family: "Lucida Sans Typewriter", "Lucida Console", Monaco, "Bitstream Vera Sans Mono", monospace;
+  font-size: 10pt;
+}
+
+a
+{
+  color: #ffffff;
+}
+
+a:visited
+{
+  color: #ffffff;
+  font-style: italic;
+}
+
+.panel-content
+{
+  background-color: #676767;
+  padding: 8pt;
+  border-bottom: 1pt solid #999999;
+}
+
+.panel-content:last-of-type
+{
+  margin-bottom: 8pt;
+}
+
+.panel-header
+{
+  border-top: 1pt solid #999999;
+  background-color: #555555;
+  color: #eeeeee;
+  text-align: center;
+  padding: 3pt;
+}
+
+.header-bottom
+{
+  display:flex;
+  flex-direction: row;
+  margin-top: 8pt;
+  justify-content: space-between;
+}
+
+.inspection
+{
+  display:flex;
+  background-color: #676767;
+  max-height: 90vh;
+  max-width: 98vw;
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: nowrap; /* If someone will find a way to display a scrollbar for colors when they are at bottom - tell me.*/
+  overflow: hidden;
+  /* height: 90vh; */
+}
+
+.preview-toolbar
+{
+  /*display: flex;*/
+  justify-content: space-around;
+  display: none;
+}
+
+.preview-toolbar.top-toolbar
+{
+  margin-bottom: 10pt;
+}
+
+.preview-toolbar.bottom-toolbar
+{
+  margin-top: 10pt;
+}
+
+.toolbar-bottom .preview-toolbar.bottom-toolbar,
+.toolbar-top .preview-toolbar.top-toolbar
+{
+  display: flex;
+}
+
+
+.square-transparency
+{
+  background-image: url(grid.gif);
+}
+
+.square, .square-transparency, .square-transparency-inner
+{
+  width: 10pt;
+  height: 10pt;
+  border: 1px solid black;
+  margin-right: 3pt;
+  display: inline-block;
+}
+
+.square-transparency-inner
+{
+  border: none;
+  margin-right: 0;
+}
+
+.button
+{
+  background-color: #757575;
+  width: 49%;
+  height: 22pt;
+}
+
+.frame-button, .play-pause-button
+{
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: pointer;
+}
+
+.play-pause-button
+{
+  display: inline-block;
+  text-decoration: underline;
+  width: 5ch;
+}
+
+.frame-button-separator
+{
+  display:inline-block;
+  width: 55px;
+  /*float:center;*/
+  text-align: center;
+}
+
+.icon-zoomin:after
+{
+  content: "+";
+}
+
+.icon-zoomout:after
+{
+  content: "-";
+}
+
+.preview
+{
+  -webkit-user-select: none;
+  user-select: none;
+  max-height: 90vh;
+  text-align:center;
+  display: flex;
+  flex-direction: column-reverse;
+  flex-grow: 1;
+  justify-content: flex-end;
+  overflow-x: auto;
+}
+
+.no-select
+{
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.previewCanvas
+{
+  /* width: 100%; */
+  /* height: 100vh; */
+  overflow:auto;
+  cursor: all-scroll;
+}
+
+.hexValue
+{
+  border-right: 1px solid black;
+  padding-right: 3px;
+  width: 60px;
+}
+
+.color-headers th
+{
+  padding-left: 2px;
+  padding-right: 2px;
+  min-width: 40px;
+}
+
+.color-info td
+{
+  white-space: nowrap;
+}
+
+.colorsInfo table
+{
+  width: 100%;
+}
+
+.colorsInfo table tbody tr:nth-child(even)
+{
+  background-color: #757575;
+}
+
+.colorChannel
+{
+  padding-left: 4px;
+}
+
+.information
+{
+  flex-basis: auto;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10pt;
+}
+
+.colorsInfo
+{
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.colorsInfo table
+{
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-right: 10px;
+}
+
+.color-usage
+{
+  display: inline-block;
+  min-width: 6ch;
+}
+
+.sort-button
+{
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.sort-button::after
+{
+  content: " \2012"
+}
+
+.sort-button.asc::after
+{
+  content:" \25BC"
+}
+
+.sort-button.desc::after
+{
+  content:" \25B2"
+}
+
+.analyzerInput
+{
+  width:100%;
+}
+
+.drag-n-drop
+{
+  flex-grow: 2;
+  text-align: center;
+}
+
+.settings-section
+{
+  border-bottom: #333333 1px solid;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+
+.settings-section-header
+{
+  padding-bottom: 2px;
+  padding-left: 10px;
+}
+
+.settings-section-header::before
+{
+  content:"> ";
+}
+
+label
+{
+  user-select: none;
+  -webkit-user-select: none;
+}

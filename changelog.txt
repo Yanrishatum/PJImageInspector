@@ -1,0 +1,45 @@
+18.09.16
+* Moved file browse button to the left so it won't disturb attention from Inspect button.
+* Added support for non-full transparency. When there's non-binary transparency (0% and 100%) additional "A" column added.
+* Added reverse checkbox, because why the hell not?
+* Small improvement in UI handling.
+
+17.09.16
+* Fixed bug with inspect button.
+* Improved UI for color listing.
+* Next/prev frame hotkey now listend to press and release.
+* Ctrl + Enter and Shift + Enter hotkeys added for "Inspect" button.
+* Fixed freeze when tab did not recieve animation frames for a while.
+* Added sorting function to palette list.
+* Extended palette generator tool.
+* * Added JASC PAL file generator
+* * Added GPL file generator (Gimp)
+* * Added HEX values generator (Pain.net)
+
+16.09.16
+* Fixed settings were not stored long-term.
+* Playback of all frames extracted to play/pause button.
+* Added playback speed multiplier.
+* Added file input to upload files via dialog box.
+Thanks for feedback to CritiqueMyWork ( http://pixeljoint.com/p/65773.htm ).
+
+Roadmap:
+
+Main features:
+  1. Image decoding:               98%; Gif supported. Png using Haxe format lib and should be fine (test pls).
+  2. Color scan [PNG/JPG]:        100%; Done.
+  3. Entire Gif support:           98%; Animations supported. Color summarizing MAY BE buggy, feedback required.
+  4. Color highlighting:          100%; Done.
+  5. Color spaces:                 50%; HSB(HSV), HSL and RGB is supported.
+  6. Drag-n-Drop:                 100%; You can drag'n'drop images over input area from PC.
+  7. Palette sorting:             100%; Sort colors by criteria.
+Suggestions:
+  Color count and percentage near.
+Tools:
+  1. Image comparsion:              0%; Compare 2 (maybe more) images to check out differences (in case someone suggested a change and you can't see it).
+  2. Color editor:                 10%; Cleaning up/changing colors right in editor with saving changes as GIF/PNG. You can edit values manually right now.
+                                        Saving only as PNG (right-click on canvas).
+  3. WIP generator:                 0%; Throw in a bunch of WIP images to generate WIP gif.
+  4. Gif->Spritesheet converter:    0%; And reverse one.
+  5. Palette file generator:       20%; Image or graphic editor formats. Only image to save atm.
+  6. Region inspect                 0%; Cut singular region from image to inspect.

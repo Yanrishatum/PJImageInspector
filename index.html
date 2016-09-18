@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en" ng-app="inspector" xmlns:style="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <title>PJ Image Insector v2.0</title>
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
+    <script src="https://code.angularjs.org/1.4.4/angular-cookies.min.js"></script>
+    <!-- Main scripts -->
+    <link rel="stylesheet" href="main.css" type="text/css"/>
+    <link rel="stylesheet" href="tools.css" type="text/css"/>
+    
+    <script src="haxegifjs.js"></script>
+    <script src="pnghxjs.js"></script>
+    <script src="lib.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body ng-controller="inspectorController" ng-mouseup="stopScrolling();" ng-keydown="handleHotkeysDown($event);" ng-keyup="handleHotkeys($event);" ng-mousemove="updateScrolling($event);">
+
+  <div>
+    <div class="panel-header">PJ Image Insector v2.0</div>
+    <div class="panel-content header">
+      <div class="readme">
+        I do really need feedback right now. So please give it to me. Contact me via <a href="http://pixeljoint.com/p/44807.htm">PJ</a> or <a href="mailto:krabanek@mgail.com">Email</a>, as you wish.
+        <br>TODO: Usage readme.
+        <br>See changelog and roadmap at <a href="changelog.txt">changelog.txt</a>.
+      </div>
+      
+      <textarea file-dropper rows="5" class="analyzerInput" ng-model="images" autofocus></textarea>
+      
+      <div class="header-bottom">
+        <span>
+          <a href="http://www.pixeljoint.com/">Back to PixelJoint</a>
+        </span>
+        <label>&nbsp;<input type="file" sp-change="loadFiles()" sp-bind="fileDialog"></input></label>
+        <div file-dropper class="drag-n-drop">
+          Drag-n-drop area
+        </div>
+        <button id="inspectButton" ng-click="loadImages();">Inspect</button>
+      </div>
+    </div>
+  </div>
+  
+  <div ng-repeat="result in results">
+    <div class="panel-header">
+      <a href="{{result.imageUrl}}">{{result.title}}</a>
+    </div>
+    <div class="panel-content">
+      <div ng-if="result.status == 2">
+        {{result.error}}
+      </div>
+      <div ng-if="result.status != 4">
+        {{result.state}}
+      </div>
+      <div ng-if="result.status == 4" class="inspection">
+        <div class="preview" ng-class="{'toolbar-top': toolbarPos != 'bottom', 'toolbar-bottom': toolbarPos != 'top' }">
+          <div class="preview-toolbar bottom-toolbar">
+            <div class="button" ng-click="zoomOut(result)">
+                <span class="icon icon-zoomout"></span>
+            </div>
+            <div class="button" ng-click="zoomIn(result)">
+                <span class="icon icon-zoomin"></span>
+            </div>
+          </div>
+          <div class="previewCanvas" canvas-placeholder="result.canvas" ng-mousedown="startScrolling(result, $event);"></div>
+          <div class="preview-toolbar top-toolbar">
+            <div class="button" ng-click="zoomOut(result)">
+                <span class="icon icon-zoomout"></span>
+            </div>
+            <div class="button" ng-click="zoomIn(result)">
+                <span class="icon icon-zoomin"></span>
+            </div>
+          </div>
+        </div>
+        <div class="information">
+          <div class="baseInfo">
+            Tools: <button ng-click="toggleColorEdit(result)">Color replacer</button>
+            <button ng-click="generatePalette(result)">Palette file</button>
+            <br/>
+            Dimensions: {{result.width}} &times; {{result.height}}
+            <br>
+            File type: {{result.fileType | uppercase}} ({{result.isIndexed ? 'indexed' : 'truecolor'}})
+            <br>
+            File size: {{(result.fileSize / 1024) | number:2}} kB
+            <br/>
+            Animated: {{(result.animated ? "Yes" : "No") }}
+            <br/>
+            Number of colors: {{result.colorsCount}}
+            <!-- TODO: Transparent? Yes/No -->
+            <span ng-if="result.animated">
+              <br/>
+              Number of frames: {{results.frames.length}}
+              <div class="frame-button-playback play-pause-button" ng-click="togglePlayback(result)">{{result.forceFrame === -1 ? "Pause" : "Play" }}</div>
+              <a data-ng-click="prevFrame(result)" class="frame-button">◀</a>
+              <span class="frame-button-separator"> {{numericAlign(result.forceFrame === -1 ? result.frame + 1 : result.forceFrame + 1, result.frameCount)}}/{{result.frameCount}} </span>
+              <a data-ng-click="nextFrame(result)" class="frame-button">▶</a>
+              <br/>
+              Playback speed %:
+              <input type="number" ng-model="result.playbackSpeed" class="playback-speed" size="3" min="1" max="400"></input>
+              <label><input type="checkbox" ng-model="result.playbackReverse">Reverse</label>
+            </span>
+            
+          </div>
+          <div class="colorsInfo">
+            <table ng-mouseleave="deselectPixels(result)">
+              <tr class="color-headers">
+                <th class="sort-button" ng-click="sortResultBy(result, 'count')"
+                    ng-class="{ 'asc': (result.sortProperty == 'count' && result.sortReverse), 'desc': (result.sortProperty == 'count' && !result.sortReverse) }">Usage</th>
+                <th class="sort-button" ng-click="sortResultBy(result, 'hex')"
+                    ng-class="{ 'asc': (result.sortProperty == 'hex' && result.sortReverse), 'desc': (result.sortProperty == 'hex' && !result.sortReverse) }">Hex</th>
+                <th ng-if="result.haveTransparency" class="sort-button" ng-click="sortResultBy(result, 'a')"
+                    ng-class="{ 'asc': (result.sortProperty == 'a' && result.sortReverse), 'desc': (result.sortProperty == 'a' && !result.sortReverse) }">A</th>
+                <th class="sort-button" ng-click="sortResultBy(result, 'ch_' + header)"
+                    ng-class="{ 'asc': (result.sortProperty == 'ch_' + header && result.sortReverse), 'desc': (result.sortProperty == 'ch_' + header && !result.sortReverse) }"
+                    ng-repeat="header in colorSpaceHeaders[result.colorSpace]">{{header}}</th>
+              </tr>
+              
+              <tr class="color-info" ng-repeat="color in result.colors | orderObjectBy:result.sortProperty:result.sortReverse">
+                
+                <!-- Transparency -->
+                <td ng-if="isTransparent(color.color)" title="{{getPercentage(color.count, result, true)}}"  ng-mouseover="selectPixels(result, color)" ng-mouseleave="deselectPixels(result)">
+                  <div class="square-transparency">
+                    <!--<div class="result-details-palette-usage-colorsquare" data-ng-style="{ 'background-color': '#' + color.hexadecimal, 'opacity': color.alpha / 255 }"></div>-->
+                    <div class="square-transparency-inner" data-ng-style="{'background-color': '#' + color.hex, 'opacity': getAlphaNormal(color.color).toString()}"></div>
+                  </div>
+                  <div class="color-usage">{{getPercentage(color.count, result)}}</div>
+                </td>
+                
+                <!-- Regular color -->
+                <td ng-if="!isTransparent(color.color)" title="{{getPercentage(color.count, result, true)}}" ng-mouseover="selectPixels(result, color)" ng-mouseleave="deselectPixels(result)">
+                  <div class="square" data-ng-style="{'background-color': '#' + color.hex}"></div>
+                  <div class="color-usage">{{getPercentage(color.count, result)}}</div>
+                </td>
+                
+                <!-- Any type -->
+                <td class="hexValue" ng-if="result.replaceColorsMode">#<input ng-model="color.hex" size="6" maxlength="6" ng-change="updateColor(result, color)"></td>
+                <td class="hexValue" ng-if="!result.replaceColorsMode">#{{color.hex}}</td>
+                
+                <!-- Transparency value -->
+                <td ng-if="result.haveTransparency && color.a != 0" class="colorChannel" title="{{getAlpha(color.color).toString()}}">{{getAlphaPercent(color.color).toString()}}%</td>
+                <td ng-if="color.a == 0" class="colorChannel" colspan="{{color.colorSpace.length + (result.haveTransparency ? 1 : 0)}}">100% transparent</td>
+                <!-- Channels -->
+                <td ng-if="result.replaceColorsMode && color.a != 0" class="colorChannel" ng-repeat="channel in color.colorSpace">
+                  <input ng-model="channel.value" type="{{channel.type}}" size="{{channel.size}}" maxlength="{{channel.size}}"
+                         min="{{channel.min}}" max="{{channel.max}}" ng-change="updateChannel(result, color, channel)">
+                </td>
+                <td class="colorChannel" ng-if="!result.replaceColorsMode && color.a != 0" ng-repeat="channel in color.colorSpace">
+                  {{channel.value}}
+                </td>
+
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tool-palette panel-content" ng-if="result.paletteFile">
+      <div><img class="tool-palette-output" ng-src="{{result.paletteFile}}"/></div>
+      <div>Download files:
+         <button ng-click="paletteDownloadJASC(result)">JASC PAL</button>
+         <button ng-click="paletteDownloadGPL(result)">Gimp GPL</button>
+         <button ng-click="paletteDownloadHex(result)">HEX values (Paint.net)</button>
+      </div>
+    </div>
+  </div>
+  <!-- Settings -->
+  <div>
+    <div class="panel-header">Settings</div>
+    <div class="panel-content">
+      <div class="settings-section">
+        <div class="settings-section-header">Common settings</div>
+        <div>
+          <label><input type="checkbox" ng-model="showCount" ng-change="setCookie('showCount', showCount)">Show pixel count instead of percentage.</label>
+        </div>
+        
+        <div>
+          Position of zoom buttons:
+          <label>
+            <input type="radio" ng-model="toolbarPos" value="both" ng-change="saveToolbarPos()"></input>Both
+          </label>
+          <label>
+            <input type="radio" ng-model="toolbarPos" value="top" ng-change="saveToolbarPos()"></input>Top
+          </label>
+          <label>
+            <input type="radio" ng-model="toolbarPos" value="bottom" ng-change="saveToolbarPos()"></input>Bottom
+          </label>
+        </div>
+        
+        <div>
+          <span>Color space:</span>
+          <!-- Ok, angular is buggy as shit when I try to create radio-group via ng-repeat. So it manually written. THANK YOU AGULAR. -->
+          <label>
+            <input type="radio" ng-model="colorSpace" value="RGB" ng-change="updateActiveColorSpace()"></input>RGB
+          </label>
+          <label>
+            <input type="radio" ng-model="colorSpace" value="HSB" ng-change="updateActiveColorSpace()"></input>HSB
+          </label>
+          <label>
+           <input type="radio" ng-model="colorSpace" value="HSL" ng-change="updateActiveColorSpace()"></input>HSL
+          </label>
+        </div>
+        <div>
+          <span>Transparency background:</span>
+          TODO
+        </div>
+      </div>
+      <div class="settings-section highlight-settings">
+        <!--
+        { color: 0xFF0000, showForeground:true, showBackground: true, backgroundColor: 0, backgroundAlpha: 0.5});-->
+        <div class="settings-section-header">Highlighting options</div>
+        <div>
+          <span>Highlighting color:</span>
+          <div class="square" data-ng-style="{'background-color': '#' + lpad(highlighting.color.toString(16), '0', 6)}"></div>
+          <span>#<input ng-value="highlightingDisplayColor(highlighting.color)" ng-model="tmpHighlitingColor" size="6" maxlength="6" ng-change="highlightingColorUpdate(tmpHighlitingColor)"></input></span>
+          <input type="checkbox" ng-model="highlighting.showForeground">Change highlighted color</input>
+        </div>
+        <div>
+          <span>Background color:</span>
+          <div class="square" data-ng-style="{'background-color': '#' + lpad(highlighting.backgroundColor.toString(16), '0', 6)}"></div>
+          <span>#<input ng-value="highlightingDisplayColor(highlighting.backgroundColor)" ng-model="tmpBackgroundColor" size="6" maxlength="6" ng-change="backgroundColorUpdate(tmpBackgroundColor)"></input></span>
+          <input type="checkbox" ng-model="highlighting.showBackground">Change background color</input>
+        </div>
+        <div>
+          <span>Background color transparency:</span>
+          <input type="number" min="0" max="100" ng-value="highlighting.backgroundAlpha * 100" ng-model="tmpBackgroundAlpha" size="3" ng-change="backgroundAlphaUpdate(tmpBackgroundAlpha)"></input>%
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div>
+    <div class="panel-header">Authors</div>
+    <div class="panel-content authors">
+      <div>Image Inspector v2. Made by <a href="http://yanrishatum.ru">Yanrishatum</a>. Feel free to send me a message with comments, suggestions or bugs.</div>
+      <div>You can contact me via <a href="mailto:krabanek@gmail.com">krabanek@gmail.com</a>.</div>
+      <div>Frontend basis by <a href="http://www.pixeljoint.com/p/415.htm">Blueberry_pie</a> (v1 design, angularjs basis).</div>
+      <div>Original concept by <a href="http://www.pixeljoint.com/p/8788.htm">Hatch</a>.</div>
+    </div>
+  </div>
+  
+  
+  </body>
+</html>
