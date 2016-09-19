@@ -1,5 +1,6 @@
 19.09.16
 * Updated PNG library with fixed handle of tRNS chunk.
+* Added theming.
 
 19.09.16
 * Fixed typo in headers ;D

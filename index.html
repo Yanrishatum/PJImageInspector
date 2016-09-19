@@ -9,7 +9,7 @@
     <!-- Main scripts -->
     <link rel="stylesheet" href="main.css" type="text/css"/>
     <link rel="stylesheet" href="tools.css" type="text/css"/>
-    
+    <link id="themeStyle" rel="stylesheet" href="main.css" type="text/css"/>
     <script src="haxegifjs.js"></script>
     <script src="pnghxjs.js"></script>
     <script src="lib.js"></script>
@@ -202,6 +202,11 @@
         <div>
           <span>Transparency background:</span>
           TODO
+        </div>
+        <div>
+          <span>Theme:</span>
+          <label><input type="radio" ng-model="colorTheme" value="main.css" ng-change="updateStyles()"></input>PixelJoint</label>
+          <label><input type="radio" ng-model="colorTheme" value="classic.css" ng-change="updateStyles()"></input>Image Specs Classic</label>
         </div>
       </div>
       <div class="settings-section highlight-settings">

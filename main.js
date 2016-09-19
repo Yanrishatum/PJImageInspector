@@ -1263,6 +1263,18 @@ function($scope, $http, $cookies) {
     loadNext();
   }
   
+  // Styles
+  
+  $scope.colorTheme = getCookie("colorTheme", "main.css");
+  updateStyles(true);
+  function updateStyles(skipCookie)
+  {
+    var link = document.getElementById("themeStyle");
+    link.href = $scope.colorTheme;
+    if (!skipCookie) setCookie("colorTheme", $scope.colorTheme);
+  }
+  $scope.updateStyles = updateStyles;
+  
   // Detect open via share-url
   var inputs = getParameter("input");
   if (inputs)
