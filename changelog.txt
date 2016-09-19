@@ -1,4 +1,7 @@
 19.09.16
+* Updated PNG library with fixed handle of tRNS chunk.
+
+19.09.16
 * Fixed typo in headers ;D
 * Color highlighting now triggers on entire row instead of only usage column.
 * Fixed color table does not obtain scrollbar in Firefox (generic browser hell).
