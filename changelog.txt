@@ -1,3 +1,8 @@
+19.09.16
+* Fixed typo in headers ;D
+* Color highlighting now triggers on entire row instead of only usage column.
+* Fixed color table does not obtain scrollbar in Firefox (generic browser hell).
+
 18.09.16
 * Moved file browse button to the left so it won't disturb attention from Inspect button.
 * Added support for non-full transparency. When there's non-binary transparency (0% and 100%) additional "A" column added.
