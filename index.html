@@ -9,7 +9,9 @@
     <!-- Main scripts -->
     <link rel="stylesheet" href="main.css" type="text/css"/>
     <link rel="stylesheet" href="tools.css" type="text/css"/>
-    <link id="themeStyle" rel="stylesheet" href="main.css" type="text/css"/>
+    <link id="themeStyle" rel="stylesheet" href="pj.css" type="text/css"/>
+    <link rel="stylesheet" href="flexible.css" type="text/css"/>
+    
     <script src="haxegifjs.js"></script>
     <script src="pnghxjs.js"></script>
     <script src="lib.js"></script>
@@ -17,8 +19,8 @@
   </head>
   <body ng-controller="inspectorController" ng-mouseup="stopScrolling();" ng-keydown="handleHotkeysDown($event);" ng-keyup="handleHotkeys($event);" ng-mousemove="updateScrolling($event);">
 
-  <div>
-    <div class="panel-header">PJ Image Inspector v2.0</div>
+  <div ng-class="{'folded': folded }" class="foldable">
+    <div class="panel-header"><div class="main-header">PJ Image Inspector v2.0</div><button class="unfold" ng-click="folded = false;">Unfold</button></div>
     <div class="panel-content header">
       <div class="readme">
         I do really need feedback right now. So please give it to me. Contact me via <a href="http://pixeljoint.com/p/44807.htm">PJ</a> or <a href="mailto:krabanek@mgail.com">Email</a>, as you wish.
@@ -26,7 +28,7 @@
         <br>See changelog and roadmap at <a href="changelog.txt">changelog.txt</a>.
       </div>
       
-      <textarea file-dropper rows="5" class="analyzerInput" ng-model="images" autofocus></textarea>
+      <textarea file-dropper rows="5" class="analyzerInput" ng-value="images" ng-model="images" autofocus></textarea>
       
       <div class="header-bottom">
         <span>
@@ -62,7 +64,7 @@
                 <span class="icon icon-zoomin"></span>
             </div>
           </div>
-          <div class="previewCanvas" canvas-placeholder="result.canvas" ng-mousedown="startScrolling(result, $event);"></div>
+          <div class="previewCanvas" ng-class="{'animated': zoomAnimation }" canvas-placeholder="result.canvas" ng-mousedown="startScrolling(result, $event);"></div>
           <div class="preview-toolbar top-toolbar">
             <div class="button" ng-click="zoomOut(result)">
                 <span class="icon icon-zoomout"></span>
@@ -79,7 +81,7 @@
             <br/>
             Dimensions: {{result.width}} &times; {{result.height}}
             <br>
-            File type: {{result.fileType | uppercase}} ({{result.isIndexed ? 'indexed' : 'truecolor'}})
+            File type: {{result.fileType | uppercase}} ({{result.indexed ? 'indexed' : 'truecolor'}})
             <br>
             File size: {{(result.fileSize / 1024) | number:2}} kB
             <br/>
@@ -205,8 +207,12 @@
         </div>
         <div>
           <span>Theme:</span>
-          <label><input type="radio" ng-model="colorTheme" value="main.css" ng-change="updateStyles()"></input>PixelJoint</label>
+          <label><input type="radio" ng-model="colorTheme" value="pj.css" ng-change="updateStyles()"></input>PixelJoint</label>
           <label><input type="radio" ng-model="colorTheme" value="classic.css" ng-change="updateStyles()"></input>Image Specs Classic</label>
+        </div>
+        <div>
+          <span>UI:</span>
+          <label><input type="checkbox" ng-model="zoomAnimation" ng-change="saveUIZoomAnimation()">Animated zoom</label>
         </div>
       </div>
       <div class="settings-section highlight-settings">

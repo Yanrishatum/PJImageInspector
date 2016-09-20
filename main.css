@@ -175,6 +175,15 @@ a:visited
   /* height: 100vh; */
   overflow:auto;
   cursor: all-scroll;
+  flex-grow: 2;
+  image-rendering: pixelated;
+}
+
+.previewCanvas.animated canvas
+{
+  transition: width 0.5s, height 0.5s;
+  -webkit-transition: width 0.5s, height 0.5s;
+  -moz-transition: width 0.5s, height 0.5s;
 }
 
 .hexValue
@@ -294,4 +303,28 @@ label
 {
   user-select: none;
   -webkit-user-select: none;
+}
+
+.main-header
+{
+  display: inline-block;
+}
+
+.unfold
+{
+  display: none;
+  float: right;
+}
+
+.folded .unfold
+{
+  display: inline-block;
+}
+
+.foldable.folded .panel-content
+{
+  height: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  overflow: hidden;
 }

@@ -1,3 +1,9 @@
+20.09.16
+* New blending for highlighting, proper this time.
+* Drag'n'Drop from other browser window now works with URL's.
+* Added basic support for small screens.
+* Added animations for zooming (can be disabled).
+
 19.09.16
 * Updated PNG library with fixed handle of tRNS chunk.
 * Added theming.

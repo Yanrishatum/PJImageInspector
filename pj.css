@@ -1,0 +1,22 @@
+
+button
+{
+  background-color: #6B6;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 5px #343;
+  outline: none;
+}
+
+button:hover
+{
+  background-color: #5C5;
+  box-shadow: 0 5px #252;
+}
+
+button:active
+{
+  box-shadow: 0 2px #242;
+  position: relative;
+  top: 3px;
+}

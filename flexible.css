@@ -1,0 +1,19 @@
+
+@media(max-width: 870px)
+{
+  .inspection
+  {
+    flex-direction: column;
+    max-height: none;
+    height: auto;
+  }
+  
+  .preview
+  {
+    width: 100%;
+    flex-grow: 1;
+    min-height: 60vh;
+    padding-bottom: 14px;
+  }
+  
+}

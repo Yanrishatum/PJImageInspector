@@ -34,6 +34,8 @@ function($scope, $http, $cookies) {
   function updateCanvasProperties(me) {
     me.canvas.width = me.width * me.scale;
     me.canvas.height = me.height * me.scale;
+    me.canvas.style.width = me.canvas.width + "px";
+    me.canvas.style.height = me.canvas.height + "px";
     me.context.mozImageSmoothingEnabled = false;
     me.context.webkitImageSmoothingEnabled = false;
     me.context.imageSmoothingEnabled = false;
@@ -149,6 +151,7 @@ function($scope, $http, $cookies) {
     var len = me.width * me.height;
     var j = 0;
     
+    var bgColor = $scope.highlighting.backgroundColor | ((((1 - $scope.highlighting.backgroundAlpha) * 0xff) & 0xff) << 24);
     for (var i = 0; i < len; i++) {
       var idx = pixels[i];
       var color = 0;
@@ -163,7 +166,7 @@ function($scope, $http, $cookies) {
           else
           {
             color = pal[idx].color;
-            if (((color >>> 24) & 0xff) < 128) color = 0xff000000 | $scope.highlighting.color;
+            if (((color >>> 24) & 0xff) < 64) color = 0xff000000 | $scope.highlighting.color;
           }
         }
         else if ($scope.highlighting.showBackground)
@@ -171,12 +174,13 @@ function($scope, $http, $cookies) {
           if ($scope.highlighting.backgroundAlpha == 1) color = 0xff000000 | $scope.highlighting.backgroundColor;
           else
           {
-            if (pal[idx].a <= 128)
-            {
-              color = (($scope.highlighting.backgroundAlpha * 0xff) << 24) | blendColors(pal[idx].color, $scope.highlighting.backgroundColor, 1 - $scope.highlighting.backgroundAlpha);
-            }
-            else
-              color = (pal[idx].a << 24) | blendColors(pal[idx].color, $scope.highlighting.backgroundColor, 1 - $scope.highlighting.backgroundAlpha);
+            color = blend(pal[idx].color, bgColor);
+            // if (pal[idx].a <= 128)
+            // {
+            //   color = (($scope.highlighting.backgroundAlpha * 0xff) << 24) | blendColors(pal[idx].color, $scope.highlighting.backgroundColor, 1 - $scope.highlighting.backgroundAlpha);
+            // }
+            // else
+            //   color = (pal[idx].a << 24) | blendColors(pal[idx].color, $scope.highlighting.backgroundColor, 1 - $scope.highlighting.backgroundAlpha);
           }
         }
         else color = pal[idx].color;
@@ -196,6 +200,25 @@ function($scope, $http, $cookies) {
     me.context.drawImage(me.internalCanvas, 0, 0);
   }
   
+  function blend(dst, src)
+  {
+    // Overlay blending
+    // Alpha: aA + aB·(1−aA)
+    var aB = ((dst >> 24) & 0xff) / 0xff;
+    var aA = ((src >> 24) & 0xff) / 0xff;
+    var aR = aA + aB * (1 - aA);
+    // Color: (xaA + xaB·(1−aA))/aR
+    return (((aR * 0xff) & 0xff) << 24) |
+           (blendChannel(((src >> 16) & 0xff) / 0xff, ((dst >> 16) & 0xff) / 0xff, aA, aB, aR) << 16) |
+           (blendChannel(((src >> 8 ) & 0xff) / 0xff, ((dst >> 8 ) & 0xff) / 0xff, aA, aB, aR) << 8 ) |
+            blendChannel(((src      ) & 0xff) / 0xff, ((dst      ) & 0xff) / 0xff, aA, aB, aR);
+  }
+  
+  function blendChannel(xA, xB, aA, aB, aR)
+  {
+    return ( ( ((xA*aA) + (xB*aB) * (1 - aA)) / aR ) * 0xff ) & 0xff;
+  }
+  /*
   function blendColors(a, b, mul)
   {
     return blendChannel(a & 0xff, b & 0xff, mul) |
@@ -208,7 +231,7 @@ function($scope, $http, $cookies) {
   {
     return (a * mul + b) & 0xff;
   }
-
+*/
   var updateId;
   var lastStamp;
   
@@ -324,7 +347,7 @@ function($scope, $http, $cookies) {
       $scope.results = [];
       var split = $scope.images.split("\n");
       changeInputValue($scope.images);
-      $scope.images = "";
+      //$scope.images = "";
 
       for (var j = 0; j < split.length; j++) {
         loadImage(split[j]);
@@ -344,6 +367,7 @@ function($scope, $http, $cookies) {
     };
     initCanvas(me);
     $scope.results.push(me);
+    $scope.folded = true;
     scanImage(me);
   }
   
@@ -351,6 +375,7 @@ function($scope, $http, $cookies) {
   {
     var me = {imageUrl: item, title: item, state: "Pending image...", status: 0};
     $scope.results.push(me);
+    $scope.folded = true;
     $http.get("getImage.php", {params: {input: item}, responseType: "text"}).success(function (data) {
       if (typeof data === "string" || data.error) {
         angular.extend(me, {title: me.imageUrl, error: "Error while pending image.", status: 2});
@@ -1228,10 +1253,16 @@ function($scope, $http, $cookies) {
     setCookie("toolbarPos", $scope.toolbarPos);
   }
   
+  $scope.saveUIZoomAnimation = function()
+  {
+    setCookie("zoomAnimation", $scope.zoomAnimation);
+  }
+  
   $scope.autoplayGif = getCookie("autoplayGif", true);
   $scope.showCount = getCookie("showCount", false); // Percent instead
   $scope.colorSpace = getCookie("colorSpace", "RGB");
   $scope.toolbarPos = getCookie("toolbarPos", "both");
+  $scope.zoomAnimation = getCookie("zoomAnimation", true);
   
   $scope.loadFiles = function()
   {
@@ -1328,10 +1359,20 @@ app.directive("fileDropper", function()
   function onDrop(e, $scope)
   {
     var div = e.target;
-    e.preventDefault();
     var files = e.dataTransfer.files;
     var count = files.length;
     var loaded = 0;
+    e.preventDefault();
+    if (count == 0)
+    {
+      var text = e.dataTransfer.getData("Text");
+      if (text)
+      {
+        $scope.images = text;
+        $scope.loadImages();
+      }
+      return;
+    }
     
     applyText(div, count > 1 ? "Loading files..." : "Loading file...");
     

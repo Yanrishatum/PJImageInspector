@@ -823,6 +823,10 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 				}
 				break;
 			case 1:
+				ca3 = 0;
+				cb = 0;
+				cg = 0;
+				cr = 0;
 				if(alpha1) {
 					var _g313 = 0;
 					while(_g313 < width1) {
@@ -887,35 +891,35 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 				}
 				break;
 			case 3:
-				var cr1 = 0;
-				var cg1 = 0;
-				var cb1 = 0;
-				var ca4 = 0;
+				ca3 = 0;
+				cb = 0;
+				cg = 0;
+				cr = 0;
 				var stride4 = y1 == 0?0:width1 * 4 * flipY1;
 				if(alpha1) {
 					var _g317 = 0;
 					while(_g317 < width1) {
 						++_g317;
-						cb1 = data.b[r + 2] + (cb1 + bgra.b[w - stride4] >> 1) & 255;
-						bgra.b[w++] = cb1 & 255;
-						cg1 = data.b[r + 1] + (cg1 + bgra.b[w - stride4] >> 1) & 255;
-						bgra.b[w++] = cg1 & 255;
-						cr1 = data.b[r] + (cr1 + bgra.b[w - stride4] >> 1) & 255;
-						bgra.b[w++] = cr1 & 255;
-						ca4 = data.b[r + 3] + (ca4 + bgra.b[w - stride4] >> 1) & 255;
-						bgra.b[w++] = ca4 & 255;
+						cb = data.b[r + 2] + (cb + bgra.b[w - stride4] >> 1) & 255;
+						bgra.b[w++] = cb & 255;
+						cg = data.b[r + 1] + (cg + bgra.b[w - stride4] >> 1) & 255;
+						bgra.b[w++] = cg & 255;
+						cr = data.b[r] + (cr + bgra.b[w - stride4] >> 1) & 255;
+						bgra.b[w++] = cr & 255;
+						ca3 = data.b[r + 3] + (ca3 + bgra.b[w - stride4] >> 1) & 255;
+						bgra.b[w++] = ca3 & 255;
 						r += 4;
 					}
 				} else {
 					var _g318 = 0;
 					while(_g318 < width1) {
 						++_g318;
-						cb1 = data.b[r + 2] + (cb1 + bgra.b[w - stride4] >> 1) & 255;
-						bgra.b[w++] = cb1 & 255;
-						cg1 = data.b[r + 1] + (cg1 + bgra.b[w - stride4] >> 1) & 255;
-						bgra.b[w++] = cg1 & 255;
-						cr1 = data.b[r] + (cr1 + bgra.b[w - stride4] >> 1) & 255;
-						bgra.b[w++] = cr1 & 255;
+						cb = data.b[r + 2] + (cb + bgra.b[w - stride4] >> 1) & 255;
+						bgra.b[w++] = cb & 255;
+						cg = data.b[r + 1] + (cg + bgra.b[w - stride4] >> 1) & 255;
+						bgra.b[w++] = cg & 255;
+						cr = data.b[r] + (cr + bgra.b[w - stride4] >> 1) & 255;
+						bgra.b[w++] = cr & 255;
 						bgra.b[w++] = (cr == alphaRed && cg == alphaGreen && cb == alphaBlue?0:255) & 255;
 						r += 3;
 					}
@@ -923,18 +927,18 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 				break;
 			case 4:
 				var stride5 = width1 * 4 * flipY1;
-				var cr2 = 0;
-				var cg2 = 0;
-				var cb2 = 0;
-				var ca5 = 0;
+				ca3 = 0;
+				cb = 0;
+				cg = 0;
+				cr = 0;
 				if(alpha1) {
 					var _g319 = 0;
 					while(_g319 < width1) {
 						var x2 = _g319++;
 						var b5 = y1 == 0?0:bgra.b[w - stride5];
 						var c3 = x2 == 0 || y1 == 0?0:bgra.b[w - stride5 - 4];
-						var k3 = cb2 + b5 - c3;
-						var pa3 = k3 - cb2;
+						var k3 = cb + b5 - c3;
+						var pa3 = k3 - cb;
 						if(pa3 < 0) {
 							pa3 = -pa3;
 						}
@@ -946,12 +950,12 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						if(pc3 < 0) {
 							pc3 = -pc3;
 						}
-						cb2 = (pa3 <= pb3 && pa3 <= pc3?cb2:pb3 <= pc3?b5:c3) + data.b[r + 2] & 255;
-						bgra.b[w++] = cb2 & 255;
+						cb = (pa3 <= pb3 && pa3 <= pc3?cb:pb3 <= pc3?b5:c3) + data.b[r + 2] & 255;
+						bgra.b[w++] = cb & 255;
 						var b6 = y1 == 0?0:bgra.b[w - stride5];
 						var c4 = x2 == 0 || y1 == 0?0:bgra.b[w - stride5 - 4];
-						var k4 = cg2 + b6 - c4;
-						var pa4 = k4 - cg2;
+						var k4 = cg + b6 - c4;
+						var pa4 = k4 - cg;
 						if(pa4 < 0) {
 							pa4 = -pa4;
 						}
@@ -963,12 +967,12 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						if(pc4 < 0) {
 							pc4 = -pc4;
 						}
-						cg2 = (pa4 <= pb4 && pa4 <= pc4?cg2:pb4 <= pc4?b6:c4) + data.b[r + 1] & 255;
-						bgra.b[w++] = cg2 & 255;
+						cg = (pa4 <= pb4 && pa4 <= pc4?cg:pb4 <= pc4?b6:c4) + data.b[r + 1] & 255;
+						bgra.b[w++] = cg & 255;
 						var b7 = y1 == 0?0:bgra.b[w - stride5];
 						var c5 = x2 == 0 || y1 == 0?0:bgra.b[w - stride5 - 4];
-						var k5 = cr2 + b7 - c5;
-						var pa5 = k5 - cr2;
+						var k5 = cr + b7 - c5;
+						var pa5 = k5 - cr;
 						if(pa5 < 0) {
 							pa5 = -pa5;
 						}
@@ -980,12 +984,12 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						if(pc5 < 0) {
 							pc5 = -pc5;
 						}
-						cr2 = (pa5 <= pb5 && pa5 <= pc5?cr2:pb5 <= pc5?b7:c5) + data.b[r] & 255;
-						bgra.b[w++] = cr2 & 255;
+						cr = (pa5 <= pb5 && pa5 <= pc5?cr:pb5 <= pc5?b7:c5) + data.b[r] & 255;
+						bgra.b[w++] = cr & 255;
 						var b8 = y1 == 0?0:bgra.b[w - stride5];
 						var c6 = x2 == 0 || y1 == 0?0:bgra.b[w - stride5 - 4];
-						var k6 = ca5 + b8 - c6;
-						var pa6 = k6 - ca5;
+						var k6 = ca3 + b8 - c6;
+						var pa6 = k6 - ca3;
 						if(pa6 < 0) {
 							pa6 = -pa6;
 						}
@@ -997,8 +1001,8 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						if(pc6 < 0) {
 							pc6 = -pc6;
 						}
-						ca5 = (pa6 <= pb6 && pa6 <= pc6?ca5:pb6 <= pc6?b8:c6) + data.b[r + 3] & 255;
-						bgra.b[w++] = ca5 & 255;
+						ca3 = (pa6 <= pb6 && pa6 <= pc6?ca3:pb6 <= pc6?b8:c6) + data.b[r + 3] & 255;
+						bgra.b[w++] = ca3 & 255;
 						r += 4;
 					}
 				} else {
@@ -1007,8 +1011,8 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						var x3 = _g320++;
 						var b9 = y1 == 0?0:bgra.b[w - stride5];
 						var c7 = x3 == 0 || y1 == 0?0:bgra.b[w - stride5 - 4];
-						var k7 = cb2 + b9 - c7;
-						var pa7 = k7 - cb2;
+						var k7 = cb + b9 - c7;
+						var pa7 = k7 - cb;
 						if(pa7 < 0) {
 							pa7 = -pa7;
 						}
@@ -1020,12 +1024,12 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						if(pc7 < 0) {
 							pc7 = -pc7;
 						}
-						cb2 = (pa7 <= pb7 && pa7 <= pc7?cb2:pb7 <= pc7?b9:c7) + data.b[r + 2] & 255;
-						bgra.b[w++] = cb2 & 255;
+						cb = (pa7 <= pb7 && pa7 <= pc7?cb:pb7 <= pc7?b9:c7) + data.b[r + 2] & 255;
+						bgra.b[w++] = cb & 255;
 						var b10 = y1 == 0?0:bgra.b[w - stride5];
 						var c8 = x3 == 0 || y1 == 0?0:bgra.b[w - stride5 - 4];
-						var k8 = cg2 + b10 - c8;
-						var pa8 = k8 - cg2;
+						var k8 = cg + b10 - c8;
+						var pa8 = k8 - cg;
 						if(pa8 < 0) {
 							pa8 = -pa8;
 						}
@@ -1037,12 +1041,12 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						if(pc8 < 0) {
 							pc8 = -pc8;
 						}
-						cg2 = (pa8 <= pb8 && pa8 <= pc8?cg2:pb8 <= pc8?b10:c8) + data.b[r + 1] & 255;
-						bgra.b[w++] = cg2 & 255;
+						cg = (pa8 <= pb8 && pa8 <= pc8?cg:pb8 <= pc8?b10:c8) + data.b[r + 1] & 255;
+						bgra.b[w++] = cg & 255;
 						var b11 = y1 == 0?0:bgra.b[w - stride5];
 						var c9 = x3 == 0 || y1 == 0?0:bgra.b[w - stride5 - 4];
-						var k9 = cr2 + b11 - c9;
-						var pa9 = k9 - cr2;
+						var k9 = cr + b11 - c9;
+						var pa9 = k9 - cr;
 						if(pa9 < 0) {
 							pa9 = -pa9;
 						}
@@ -1054,8 +1058,8 @@ format_png_Tools.extract32 = function(d,bytes,flipY) {
 						if(pc9 < 0) {
 							pc9 = -pc9;
 						}
-						cr2 = (pa9 <= pb9 && pa9 <= pc9?cr2:pb9 <= pc9?b11:c9) + data.b[r] & 255;
-						bgra.b[w++] = cr2 & 255;
+						cr = (pa9 <= pb9 && pa9 <= pc9?cr:pb9 <= pc9?b11:c9) + data.b[r] & 255;
+						bgra.b[w++] = cr & 255;
 						bgra.b[w++] = (cr == alphaRed && cg == alphaGreen && cb == alphaBlue?0:255) & 255;
 						r += 3;
 					}
